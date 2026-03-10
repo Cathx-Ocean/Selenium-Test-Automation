@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     powershell 'Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force'
-                    powershell '.\\scripts\\install_chrome.ps1'
+                    powershell './scripts/install_chrome.ps1'
                 }
             }
         }
@@ -49,7 +49,7 @@ pipeline {
             steps {
                 script {
                     powershell 'Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force'
-                    powershell ".\\scripts\\download_chromedriver.ps1 -DriverDir ${env.DRIVER_DIR}"
+                    powershell "./scripts/download_chromedriver.ps1 -DriverDir ${env.DRIVER_DIR}"
                 }
             }
         }
