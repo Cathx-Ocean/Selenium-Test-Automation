@@ -38,15 +38,15 @@ pipeline {
 
         stage('Install Google Chrome') {
             steps {
-                powershell "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force"
-                powershell ".\\scripts\\install_chrome.ps1"
+                powershell 'Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force'
+                powershell '.\\scripts\\install_chrome.ps1'
             }
         }
 
         stage('Download Matching ChromeDriver') {
             steps {
-                powershell "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force"
-                powershell ".\\scripts\\download_chromedriver.ps1 -DriverDir '${DRIVER_DIR}'"
+                powershell 'Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force'
+                powershell '.\\scripts\\download_chromedriver.ps1 -DriverDir drivers'
             }
         }
     }
