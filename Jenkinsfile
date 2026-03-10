@@ -1,11 +1,5 @@
 pipeline {
-    agent {
-        dockerfile {
-            filename 'Dockerfile'
-            dir '.'
-            additionalBuildArgs ''
-        }
-    }
+    agent any
 
     environment {
         VENV_DIR = '.venv'
@@ -19,40 +13,43 @@ pipeline {
             }
         }
 
-        stage('Setup Virtual Environment') {
+        stage('Setup Python Environment') {
             steps {
-                sh '''
-                    python -m venv $VENV_DIR
-                    . $VENV_DIR/bin/activate
+                bat """
+                    python -m venv %VENV_DIR%
+                    call %VENV_DIR%\\Scripts\\activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
-                '''
+                """
             }
         }
 
         stage('Run Selenium Tests (Headless Chrome)') {
             steps {
-                sh '''
-                    . $VENV_DIR/bin/activate
-                    mkdir -p $REPORT_DIR
-                    pytest --junitxml=$REPORT_DIR/results.xml \
-                           --html=$REPORT_DIR/report.html --self-contained-html
-                '''
+                bat """
+                    call %VENV_DIR%\\Scripts\\activate
+                    if not exist %REPORT_DIR% mkdir %REPORT_DIR%
+                    pytest --junitxml=%REPORT_DIR%\\results.xml ^
+                           --html=%REPORT_DIR%\\report.html --self-contained-html
+                """
             }
         }
 
         stage('Publish Reports') {
             steps {
-                junit "$REPORT_DIR/results.xml"
-                archiveArtifacts artifacts: "$REPORT_DIR/report.html", fingerprint: true
+                junit "%REPORT_DIR%\\results.xml"
+                archiveArtifacts artifacts: "%REPORT_DIR%\\report.html", fingerprint: true
             }
         }
     }
 
     post {
         always {
-            echo 'Cleaning workspace...'
+            echo 'Cleaning up workspace...'
             deleteDir()
+        }
+        failure {
+            echo 'Build failed. Check reports for details.'
         }
     }
 }
